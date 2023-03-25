@@ -7,3 +7,6 @@ lint:
 
 lint-fix:
 	composer exec --verbose phpcbf -- --standard=PSR12 public
+
+start-locally:
+	php -S localhost:8080 -t public public/index.php
