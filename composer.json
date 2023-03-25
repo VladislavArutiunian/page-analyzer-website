@@ -1,0 +1,25 @@
+{
+    "name": "hexlet/code",
+    "description": "My third project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Hexlet\\Code\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Vladislav Arutiunian",
+            "email": "vladislav.arutiunian@gmail.com"
+        }
+    ],
+    "require": {
+        "tightenco/collect": "*",
+        "slim/slim": "*",
+        "slim/psr7": "^1.6"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*",
+        "squizlabs/php_codesniffer": "*"
+    }
+}
