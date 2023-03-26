@@ -16,7 +16,12 @@
     "require": {
         "tightenco/collect": "*",
         "slim/slim": "*",
-        "slim/psr7": "^1.6"
+        "slim/psr7": "^1.6",
+        "slim/twig-view": "^3.3",
+        "twbs/bootstrap": "5.3.0-alpha2",
+        "php-di/php-di": "*",
+        "slim/http": "*",
+        "guzzlehttp/guzzle": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "*",
