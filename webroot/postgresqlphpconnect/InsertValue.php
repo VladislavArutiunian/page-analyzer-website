@@ -9,7 +9,7 @@ use Carbon\Carbon;
 class InsertValue
 {
     private $pdo;
-    
+
     public function __construct($pdo)
     {
         $this->pdo = $pdo;
@@ -23,7 +23,7 @@ class InsertValue
         $tz = new CarbonTimeZone('Europe/Moscow'); // instance way
         $carbon = Carbon::now($tz);
 
-        
+
         $stmt->bindValue(':name', $url);
         $stmt->bindValue(':created_at', $carbon->format('Y-m-d H:i:s.u'));
 

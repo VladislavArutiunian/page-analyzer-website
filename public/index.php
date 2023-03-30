@@ -12,7 +12,6 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
 use Slim\Views\Twig;
 use Slim\Views\TwigMiddleware;
-
 use Valitron\Validator as V;
 
 $autoloadPath1 = __DIR__ . '/../../../autoload.php';
@@ -43,9 +42,9 @@ $app->get('/', function (Request $request, Response $response) {
 
 $app->post('/urls', function (Request $request, Response $response) {
     $view = Twig::fromRequest($request);
-    
+
     $url = $request->getParsedBodyParam('url')['name'];
-    
+
     $validation = new V(['url' => $url]);
 
     $validation->rule('required', 'url');
@@ -61,7 +60,7 @@ $app->post('/urls', function (Request $request, Response $response) {
         return $view->render($response, 'index.html.twig', $params);
     }
     $normalizedUrl = Normalize::normalizeUrl($url);
-    
+
     $connection = Connection::get()->connect();
     $selection = new Postgre\SelectValue($connection);
     $countRows = $selection->selectValue($normalizedUrl);
@@ -70,7 +69,7 @@ $app->post('/urls', function (Request $request, Response $response) {
         $insert = new InsertValue($connection);
         $res = $insert->insertValue('urls', $normalizedUrl);
     }
-    
+
     $params = [];
     return $view->render($response, 'index.html.twig', $params);
 });

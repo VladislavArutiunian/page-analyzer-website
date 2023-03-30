@@ -5,12 +5,12 @@ namespace Postgre;
 class SelectValue
 {
     private $pdo;
-    
+
     public function __construct($pdo)
     {
         $this->pdo = $pdo;
     }
-    
+
     public function selectValue(string $url)
     {
         $sql = "SELECT * FROM urls WHERE name = :name";

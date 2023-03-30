@@ -4,12 +4,12 @@ namespace Hexlet\Helpers;
 
 use function DI\string;
 
-abstract class Normalize
+class Normalize
 {
     public function __construct()
     {
     }
-    
+
     public static function normalizeUrl(string $url): string
     {
         $structure = parse_url($url);

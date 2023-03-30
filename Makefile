@@ -3,7 +3,7 @@ start:
 	php -S 0.0.0.0:$(PORT) -t public
 
 lint:
-	composer exec --verbose phpcs -- --standard=PSR12 public
+	composer exec --verbose phpcs -- --standard=PSR12 public/ src/ webroot/
 
 lint-fix:
 	composer exec --verbose phpcbf -- --standard=PSR12 public

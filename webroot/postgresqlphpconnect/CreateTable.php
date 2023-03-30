@@ -12,10 +12,10 @@ class CreateTable
         $this->pdo = $pdo;
         return $this;
     }
-    
+
     public function createTable()
     {
-        $sql = "CREATE TABLE IF NOT EXISTS test2 (name varchar(255) id bigint)";
+        $sql = "CREATE TABLE IF NOT EXISTS test2 (name varchar(255), id bigint)";
         $this->pdo->exec($sql);
         return $this;
     }

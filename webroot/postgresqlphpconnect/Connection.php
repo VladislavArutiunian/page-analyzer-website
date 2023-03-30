@@ -1,6 +1,6 @@
 <?php
 
-namespace Postgre; 
+namespace Postgre;
 
 use Exception;
 use PDO;
@@ -40,7 +40,7 @@ final class Connection
 
         return Connection::$connect;
     }
-    
+
 
     protected function __construct()
     {
