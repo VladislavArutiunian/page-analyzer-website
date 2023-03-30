@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+{% include ('parts/__head.html.twig') %}
+
+{% block body %}
+    <body class="min-vh-100 d-flex flex-column">
+    
+    {% include ('parts/body/__header.html.twig') %}
+    
+    <main class="flex-grow-1">
+        <div class="container-lg mt-3">
+            <div class="row">
+                <div class="col-12 col-md-10 col-lg-8 mx-auto border rounded-3 bg-light p-5">
+                    <h1 class="display-3">Анализатор страниц</h1>
+                    <p class="lead">Бесплатно проверяйте сайты на SEO пригодность</p>
+                    <form action="/urls" method="post" class="row" required>
+                        <div class="col-8">
+                            <input name="url[name]" placeholder="https://www.example.com"  value="{{ value }}" class="form-control form-control-lg {{ class ?? '' }}" type="text">
+                            <div class="invalid-feedback">Некорректный URL</div>
+                        </div>
+                        <div class="col-2">
+                            <input type="submit" value="Проверить" class="btn btn-primary btn-lg ms-3 px-5 text-uppercase mx-3">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    {% include ('parts/body/__footer.html.twig') %}
+    </body>
+{% endblock %}
+<html>

@@ -4,7 +4,9 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Hexlet\\Code\\": "src/"
+            "Hexlet\\Code\\": "public/",
+            "Hexlet\\Helpers\\": "src/",
+            "Postgre\\": "webroot/postgresqlphpconnect/"
         }
     },
     "authors": [
@@ -21,10 +23,16 @@
         "twbs/bootstrap": "5.3.0-alpha2",
         "php-di/php-di": "*",
         "slim/http": "*",
-        "guzzlehttp/guzzle": "*"
+        "guzzlehttp/guzzle": "*",
+        "ext-pdo": "*",
+        "vlucas/valitron": "^1.4",
+        "nesbot/carbon": "^2.66",
+        "laracasts/flash": "^3.2",
+        "slim/flash": "^0.4.0"
     },
     "require-dev": {
         "phpunit/phpunit": "*",
-        "squizlabs/php_codesniffer": "*"
+        "squizlabs/php_codesniffer": "*",
+        "symfony/var-dumper": "^6.2"
     }
 }
