@@ -23,7 +23,6 @@
         "twbs/bootstrap": "5.3.0-alpha2",
         "php-di/php-di": "*",
         "slim/http": "*",
-        "guzzlehttp/guzzle": "*",
         "ext-pdo": "*",
         "vlucas/valitron": "^1.4",
         "nesbot/carbon": "^2.66",

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+{% include ('parts/__head.html.twig') %}
+
+{% block body %}
+<body class="min-vh-100 d-flex flex-column">
+
+{% include ('parts/body/__header.html.twig') %}
+
+{#<div class="alert alert-success invisible" role="alert">#}
+{#    Страница успешно добавлена (Страница уже существует)#}
+{#</div>#}
+
+<main class="flex-grow-1">
+    <div class="container-lg mt-3">
+        <h1>Сайты</h1>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover text-nowrap" data-test="urls">
+                <tbody>
+                <tr>
+                    <th>ID</th>
+                    <th>Имя</th>
+                    <th>Последняя проверка</th>
+                    <th>Код ответа</th>
+                </tr>
+               
+                    {% if urlList is defined %}
+                    {% for key, item in urlList %}
+                <tr>
+                        <th>{{ item.0 }}</th>
+                        <th>{{ item.1 }}</th>
+                        <th> </th>
+                        <th> </th>
+                </tr>
+                    {% endfor %}
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+{% include ('parts/body/__footer.html.twig') %}
+
+</body>
+{% endblock %}

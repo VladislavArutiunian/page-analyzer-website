@@ -16,7 +16,7 @@
                     <p class="lead">Бесплатно проверяйте сайты на SEO пригодность</p>
                     <form action="/urls" method="post" class="row" required>
                         <div class="col-8">
-                            <input name="url[name]" placeholder="https://www.example.com"  value="{{ value }}" class="form-control form-control-lg {{ class ?? '' }}" type="text">
+                            <input name="url[name]" placeholder="https://www.example.com"  value="{{ inputValue }}" class="form-control form-control-lg {{ inputClass ?? '' }}" type="text">
                             <div class="invalid-feedback">Некорректный URL</div>
                         </div>
                         <div class="col-2">
@@ -31,4 +31,4 @@
     {% include ('parts/body/__footer.html.twig') %}
     </body>
 {% endblock %}
-<html>
+</html>
