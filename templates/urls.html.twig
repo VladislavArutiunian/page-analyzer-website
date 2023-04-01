@@ -24,17 +24,18 @@
                     <th>Последняя проверка</th>
                     <th>Код ответа</th>
                 </tr>
-               
-                    {% if urlList is defined %}
+                
+                {% if urlList is defined %}
                     {% for key, item in urlList %}
                 <tr>
-                        <th>{{ item.0 }}</th>
-                        <th>{{ item.1 }}</th>
-                        <th> </th>
-                        <th> </th>
-                </tr>
+                            <td>{{ item.0 }}</td>
+                            <td><a href="/urls/{{ item.0 }}">{{ item.1 }}</a></td>
+                            <td> </td>
+                            <td> </td>
+                </tr>     
                     {% endfor %}
-                    {% endif %}
+                {% endif %}
+                
                 </tbody>
             </table>
         </div>
