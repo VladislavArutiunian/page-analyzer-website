@@ -62,9 +62,9 @@ $app->get('/', function (Request $request, Response $response) {
     $view = Twig::fromRequest($request);
 
     $flash = $this->get('flash')->getMessages();
-    $params = [];
+    $params = ['headerMainActive' => 'active'];
     if (count($flash['errors'] ?? []) !== 0) {
-        $params = ['inputError' => 'visible'];
+        $params['inputError'] = 'visible';
     }
 
     return $view->render($response, 'index.html.twig', $params);
@@ -77,7 +77,8 @@ $app->get('/urls', function (Request $request, Response $response) {
     $select = new Postgre\SelectAll($connection);
     $urlList = $select->selectAll();
     $params = [
-        'urlList' => $urlList
+        'urlList' => $urlList,
+        'headerSitesActive' => 'active'
     ];
     return $view->render($response, 'urls.html.twig', $params);
 });
