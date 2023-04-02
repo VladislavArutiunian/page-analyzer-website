@@ -6,9 +6,9 @@
 <body class="min-vh-100 d-flex flex-column">
 
 {% include ('parts/body/__header.html.twig') %}
-{#<div class="alert alert-success in-valid" role="alert">#}
-{#    Страница успешно добавлена#}
-{#</div>#}
+<div class="alert alert-success {% if flashSuccess is null %} d-none {% endif %}" role="alert">
+    {{ flashSuccess }}
+</div>
 <main class="flex-grow-1">
     <div class="container-lg mt-3">
         <h1>Сайт: {{ siteParamsList.name }}</h1>

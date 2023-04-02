@@ -62,14 +62,9 @@ $app->add(TwigMiddleware::create($app, $twig));
 $app->get('/', function (Request $request, Response $response) {
     $view = Twig::fromRequest($request);
 
-    $flash = $this->get('flash')->getMessages();
-    $params = ['headerMainActive' => 'active'];
-    if (count($flash['errors'] ?? []) !== 0) {
-        $params['inputError'] = 'visible';
-    }
-
-    return $view->render($response, 'index.html.twig', $params);
+    return $view->render($response, 'index.html.twig', ['headerMainActive' => 'active']);
 })->setName('main');
+
 
 $app->get('/urls', function (Request $request, Response $response) {
     $view = Twig::fromRequest($request);
@@ -87,18 +82,21 @@ $app->get('/urls', function (Request $request, Response $response) {
 
 $app->get('/urls/{id}', function (Request $request, Response $response, $args) {
     $view = Twig::fromRequest($request);
+    $flashSuccess = $this->get('flash')->getFirstMessage('success');
 
     $id = $args['id'];
 
     $connection = Connection::get()->connect();
     $siteParamsList = Select::selectUrlById($connection, $id);
     $params = [
-        'siteParamsList' => $siteParamsList
+        'siteParamsList' => $siteParamsList,
+        'flashSuccess' => $flashSuccess
     ];
     return $view->render($response, 'url-id.html.twig', $params);
 })->setName('url');
 
 $router = $app->getRouteCollector()->getRouteParser();
+
 
 $app->post('/urls', function (Request $request, Response $response) use ($router) {
     $view = Twig::fromRequest($request);
@@ -124,13 +122,15 @@ $app->post('/urls', function (Request $request, Response $response) use ($router
 
     $connection = Connection::get()->connect();
     $existingUrls = Select::selectUrlByName($connection, $normalizedUrl);
+    $this->get('flash')->addMessage('success', 'Страница уже существует');
 
     if (count($existingUrls) === 0) {
         $insert = new InsertValue($connection);
         $lastInsertId = $insert->insertValue('urls', $normalizedUrl);
+        $this->get('flash')->clearMessage('success');
+        $this->get('flash')->addMessage('success', 'Страница успешно добавлена');
     }
     $urlId = $lastInsertId ?? Select::getId($existingUrls);
-    $this->get('flash')->addMessage('success', 'Страница успешно добавлена');
 
     return $response->withRedirect($router->urlFor('url', ['id' => $urlId]));
 });
