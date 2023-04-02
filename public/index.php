@@ -7,6 +7,7 @@ use Hexlet\Helpers\Normalize;
 use Postgre;
 use Postgre\Connection;
 use Postgre\InsertValue;
+use Postgre\Select;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
@@ -32,8 +33,8 @@ $containerBuilder->addDefinitions(
         }
     ]
 );
-//$container = new Container();
-//AppFactory::setContainer($container);
+
+
 AppFactory::setContainer($containerBuilder->build());
 
 $app = AppFactory::create();
@@ -74,8 +75,9 @@ $app->get('/urls', function (Request $request, Response $response) {
     $view = Twig::fromRequest($request);
 
     $connection = Connection::get()->connect();
-    $select = new Postgre\SelectAll($connection);
-    $urlList = $select->selectAll();
+
+
+    $urlList = Select::selectAllUrls($connection);
     $params = [
         'urlList' => $urlList,
         'headerSitesActive' => 'active'
@@ -83,6 +85,18 @@ $app->get('/urls', function (Request $request, Response $response) {
     return $view->render($response, 'urls.html.twig', $params);
 });
 
+$app->get('/urls/{id}', function (Request $request, Response $response, $args) {
+    $view = Twig::fromRequest($request);
+
+    $id = $args['id'];
+
+    $connection = Connection::get()->connect();
+    $siteParamsList = Select::selectUrlById($connection, $id);
+    $params = [
+        'siteParamsList' => $siteParamsList
+    ];
+    return $view->render($response, 'url-id.html.twig', $params);
+});
 
 $app->post('/urls', function (Request $request, Response $response) {
     $view = Twig::fromRequest($request);
@@ -101,21 +115,21 @@ $app->post('/urls', function (Request $request, Response $response) {
             'inputClass' => 'is-invalid',
             'inputValue' => htmlspecialchars($url)
         ];
+        $response->withStatus(422);
         return $view->render($response, 'index.html.twig', $params);
     }
     $normalizedUrl = Normalize::normalizeUrl($url);
 
     $connection = Connection::get()->connect();
-    $selection = new Postgre\SelectValue($connection);
-    $countRows = $selection->selectValue($normalizedUrl);
+    $existingUrls = Select::selectUrlByName($connection, $normalizedUrl);
 
-    if ($countRows === 0) {
+    if (count($existingUrls) === 0) {
         $insert = new InsertValue($connection);
-        $res = $insert->insertValue('urls', $normalizedUrl);
+        $lastInsertId = $insert->insertValue('urls', $normalizedUrl);
     }
-
+    $urlId = $lastInsertId ?? Select::getId($existingUrls);
     $this->get('flash')->addMessage('success', 'Страница успешно добавлена');
-    return $response->withRedirect('/');
+    return $response->withRedirect("/urls/" . $urlId);
 });
 
 $app->run();

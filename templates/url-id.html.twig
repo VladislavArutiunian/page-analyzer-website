@@ -1,0 +1,70 @@
+<html>
+
+{% include ('parts/__head.html.twig') %}
+
+{% block body %}
+<body class="min-vh-100 d-flex flex-column">
+
+{% include ('parts/body/__header.html.twig') %}
+{#<div class="alert alert-success in-valid" role="alert">#}
+{#    Страница успешно добавлена#}
+{#</div>#}
+<main class="flex-grow-1">
+    <div class="container-lg mt-3">
+        <h1>Сайт: {{ siteParamsList.name }}</h1>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover text-nowrap" data-test="url">
+                <tbody>
+                <tr>
+                    <td>ID</td>
+                    <td>{{ siteParamsList.id }}</td>
+                </tr>
+                <tr>
+                    <td>Имя</td>
+                    <td>{{ siteParamsList.name }}</td>
+                </tr>
+                <tr>
+                    <td>Дата создания</td>
+                    <td>{{ siteParamsList.created_at }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <h2 class="mt-5 mb-3">Проверки</h2>
+        <form method="post" action="/urls/1/checks">
+            <input type="submit" class="btn btn-primary" value="Запустить проверку">
+        </form>
+        <table class="table table-bordered table-hover" data-test="checks">
+            <tbody>
+            <tr>
+                <th>ID</th>
+                <th>Код ответа</th>
+                <th>h1</th>
+                <th>title</th>
+                <th>description</th>
+                <th>Дата создания</th>
+            </tr>
+            <!--?php foreach ($checks as $check): ?-->
+            {% if checks is defined %}
+            {% for key, item in checks %}
+            <tr>
+                <td></td>
+                <td></td>
+                <td class="text-break"> </td>
+                <td class="text-break"> </td>
+                <td class="text-break"> </td>
+                <td> </td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+            </tbody>
+        </table>
+    </div>
+</main>
+
+{% include ('parts/body/__footer.html.twig') %}
+
+</body>
+{% endblock %}
+
+</html>
