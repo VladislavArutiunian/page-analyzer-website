@@ -30,8 +30,8 @@
                 <tr>
                             <td>{{ item.id }}</td>
                             <td><a href="{{ url_for('url', {'id': item.id}) }}">{{ item.name }}</a></td>
-                            <td> </td>
-                            <td> </td>
+                            <td>{{ item.last_check_created_at }}</td>
+                            <td>{{ item.last_check_response_code }}</td>
                 </tr>     
                     {% endfor %}
                 {% endif %}

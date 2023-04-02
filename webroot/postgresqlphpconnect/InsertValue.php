@@ -32,4 +32,22 @@ class InsertValue
         // возврат полученного значения id
         return $this->pdo->lastInsertId();
     }
+
+    public function insertCheck($url_id)
+    {
+        $sql = "INSERT INTO url_checks (url_id, created_at) VALUES (:url_id, :created_at)";
+        $stmt = $this->pdo->prepare($sql);
+
+        $tz = new CarbonTimeZone('Europe/Moscow'); // instance way
+        $carbon = Carbon::now($tz);
+
+
+        $stmt->bindValue(':url_id', $url_id);
+        $stmt->bindValue(':created_at', $carbon->format('Y-m-d H:i:s.u'));
+
+        $stmt->execute();
+
+        // возврат полученного значения id
+        return $this->pdo->lastInsertId();
+    }
 }

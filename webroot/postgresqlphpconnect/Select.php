@@ -40,6 +40,45 @@ class Select
         return self::normalizeFetchAll($stmt->fetchAll(PDO::FETCH_ASSOC));
     }
 
+    public static function selectAllChecks(PDO $connection, string $url_id)
+    {
+        $sql = "SELECT id, url_id, created_at FROM url_checks WHERE url_id = :url_id ORDER BY id DESC ";
+        $stmt = $connection->prepare($sql);
+
+        $stmt->bindValue(':url_id', $url_id);
+
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public static function selectLastCheck(PDO $connection, string $url_id)
+    {
+        $sql = "SELECT id, url_id, status_code, created_at FROM url_checks 
+                                           WHERE url_id = :url_id 
+                                           ORDER BY id DESC LIMIT 1";
+        $stmt = $connection->prepare($sql);
+
+        $stmt->bindValue(':url_id', $url_id);
+
+        $stmt->execute();
+
+        return self::normalizeFetchAll($stmt->fetchAll(PDO::FETCH_ASSOC));
+    }
+
+    public static function prepareAllUrls(PDO $connection)
+    {
+        $urls = Select::selectAllUrls($connection);
+        $prepared = [];
+        foreach ($urls as $url) {
+            $lastCheck = self::selectLastCheck($connection, self::getId($url));
+            $url['last_check_created_at'] = empty($lastCheck) ? '' : $lastCheck['created_at'];
+            $url['last_check_response_code'] = empty($lastCheck) ? '' : $lastCheck['status_code'];
+            $prepared[] = $url;
+        }
+        return $prepared;
+    }
+
     public static function normalizeFetchAll($fetchAll): array
     {
         if ($fetchAll === []) {

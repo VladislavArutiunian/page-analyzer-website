@@ -71,8 +71,7 @@ $app->get('/urls', function (Request $request, Response $response) {
 
     $connection = Connection::get()->connect();
 
-
-    $urlList = Select::selectAllUrls($connection);
+    $urlList = Select::prepareAllUrls($connection);
     $params = [
         'urlList' => $urlList,
         'headerSitesActive' => 'active'
@@ -87,13 +86,19 @@ $app->get('/urls/{id}', function (Request $request, Response $response, $args) {
     $id = $args['id'];
 
     $connection = Connection::get()->connect();
+
+    $checks = Select::selectAllChecks($connection, $id);
     $siteParamsList = Select::selectUrlById($connection, $id);
     $params = [
+        'checks' => $checks,
         'siteParamsList' => $siteParamsList,
         'flashSuccess' => $flashSuccess
     ];
     return $view->render($response, 'url-id.html.twig', $params);
 })->setName('url');
+
+
+
 
 $router = $app->getRouteCollector()->getRouteParser();
 
@@ -134,5 +139,19 @@ $app->post('/urls', function (Request $request, Response $response) use ($router
 
     return $response->withRedirect($router->urlFor('url', ['id' => $urlId]));
 });
+
+
+
+$app->post('/urls/{url_id}/checks', function (Request $request, Response $response, $args) use ($router) {
+    $url_id = $args['url_id'];
+
+    $connection = Connection::get()->connect();
+    $insert = new InsertValue($connection);
+    $lastCheckId = $insert->insertCheck($url_id);
+
+    $this->get('flash')->addMessage('success', 'Страница успешно проверена');
+    return $response->withRedirect($router->urlFor('url', ['id' => $url_id]));
+})->setName('check');
+
 
 $app->run();
