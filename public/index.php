@@ -69,7 +69,7 @@ $app->get('/', function (Request $request, Response $response) {
     }
 
     return $view->render($response, 'index.html.twig', $params);
-});
+})->setName('main');
 
 $app->get('/urls', function (Request $request, Response $response) {
     $view = Twig::fromRequest($request);
@@ -83,7 +83,7 @@ $app->get('/urls', function (Request $request, Response $response) {
         'headerSitesActive' => 'active'
     ];
     return $view->render($response, 'urls.html.twig', $params);
-});
+})->setName('urls');
 
 $app->get('/urls/{id}', function (Request $request, Response $response, $args) {
     $view = Twig::fromRequest($request);
@@ -96,9 +96,11 @@ $app->get('/urls/{id}', function (Request $request, Response $response, $args) {
         'siteParamsList' => $siteParamsList
     ];
     return $view->render($response, 'url-id.html.twig', $params);
-});
+})->setName('url');
 
-$app->post('/urls', function (Request $request, Response $response) {
+$router = $app->getRouteCollector()->getRouteParser();
+
+$app->post('/urls', function (Request $request, Response $response) use ($router) {
     $view = Twig::fromRequest($request);
 
     $url = $request->getParsedBodyParam('url')['name'];
@@ -129,7 +131,8 @@ $app->post('/urls', function (Request $request, Response $response) {
     }
     $urlId = $lastInsertId ?? Select::getId($existingUrls);
     $this->get('flash')->addMessage('success', 'Страница успешно добавлена');
-    return $response->withRedirect("/urls/" . $urlId);
+
+    return $response->withRedirect($router->urlFor('url', ['id' => $urlId]));
 });
 
 $app->run();

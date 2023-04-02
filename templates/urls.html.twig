@@ -29,7 +29,7 @@
                     {% for key, item in urlList %}
                 <tr>
                             <td>{{ item.id }}</td>
-                            <td><a href="/urls/{{ item.id }}">{{ item.name }}</a></td>
+                            <td><a href="{{ url_for('url', {'id': item.id}) }}">{{ item.name }}</a></td>
                             <td> </td>
                             <td> </td>
                 </tr>     
