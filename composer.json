@@ -27,7 +27,9 @@
         "vlucas/valitron": "^1.4",
         "nesbot/carbon": "^2.66",
         "laracasts/flash": "^3.2",
-        "slim/flash": "^0.4.0"
+        "slim/flash": "^0.4.0",
+        "guzzlehttp/guzzle": "^7.5",
+        "imangazaliev/didom": "^2.0"
     },
     "require-dev": {
         "phpunit/phpunit": "*",

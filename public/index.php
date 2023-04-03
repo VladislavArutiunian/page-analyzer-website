@@ -3,6 +3,7 @@
 namespace Hexlet\Code;
 
 use DI\ContainerBuilder;
+use Hexlet\Helpers\Checker;
 use Hexlet\Helpers\Normalize;
 use Postgre;
 use Postgre\Connection;
@@ -81,7 +82,11 @@ $app->get('/urls', function (Request $request, Response $response) {
 
 $app->get('/urls/{id}', function (Request $request, Response $response, $args) {
     $view = Twig::fromRequest($request);
-    $flashSuccess = $this->get('flash')->getFirstMessage('success');
+
+    $flash = $this->get('flash')->getMessages();
+    if (isset($flash)) {
+        $flashClass = isset($flash['error']) ? 'danger' : 'success';
+    }
 
     $id = $args['id'];
 
@@ -92,7 +97,8 @@ $app->get('/urls/{id}', function (Request $request, Response $response, $args) {
     $params = [
         'checks' => $checks,
         'siteParamsList' => $siteParamsList,
-        'flashSuccess' => $flashSuccess
+        'flash' => $flash,
+        'flashClass' => $flashClass ?? ''
     ];
     return $view->render($response, 'url-id.html.twig', $params);
 })->setName('url');
@@ -145,11 +151,15 @@ $app->post('/urls', function (Request $request, Response $response) use ($router
 $app->post('/urls/{url_id}/checks', function (Request $request, Response $response, $args) use ($router) {
     $url_id = $args['url_id'];
 
-    $connection = Connection::get()->connect();
-    $insert = new InsertValue($connection);
-    $lastCheckId = $insert->insertCheck($url_id);
+    $check = new Checker();
+    $check->makeCheck($url_id);
 
-    $this->get('flash')->addMessage('success', 'Страница успешно проверена');
+    if ($check->getErrors()) {
+        $this->get('flash')->addMessage('error', 'Произошла ошибка при проверке, не удалось подключиться');
+    } else {
+        $this->get('flash')->addMessage('success', 'Страница успешно проверена');
+    }
+
     return $response->withRedirect($router->urlFor('url', ['id' => $url_id]));
 })->setName('check');
 

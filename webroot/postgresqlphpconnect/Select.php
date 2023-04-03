@@ -42,7 +42,7 @@ class Select
 
     public static function selectAllChecks(PDO $connection, string $url_id)
     {
-        $sql = "SELECT id, url_id, created_at FROM url_checks WHERE url_id = :url_id ORDER BY id DESC ";
+        $sql = "SELECT id, url_id, status_code, created_at FROM url_checks WHERE url_id = :url_id ORDER BY id DESC ";
         $stmt = $connection->prepare($sql);
 
         $stmt->bindValue(':url_id', $url_id);
