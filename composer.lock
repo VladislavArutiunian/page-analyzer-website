@@ -4,8 +4,43 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4379da2a5969c5585a007de497444156",
+    "content-hash": "71dd0231aef9469c76a0b3ee3396d8cd",
     "packages": [
+        {
+            "name": "cweiske/php-sqllint",
+            "version": "v0.2.3",
+            "source": {
+                "type": "git",
+                "url": "https://git.cweiske.de/php-sqllint.git",
+                "reference": "bc9dfbea42b7426e0b4e72e62ceb345d29c9d32e"
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "pear/console_commandline": "^1.2",
+                "phpmyadmin/sql-parser": "^4.1.1"
+            },
+            "bin": [
+                "bin/php-sqllint"
+            ],
+            "type": "project",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "AGPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Christian Weiske",
+                    "email": "cweiske@cweiske.de",
+                    "homepage": "http://cweiske.de/"
+                }
+            ],
+            "description": "Command line tool to validate (syntax check) SQL files",
+            "homepage": "http://cweiske.de/php-sqllint.htm",
+            "support": {
+                "issues": "https://github.com/cweiske/php-sqllint/issues"
+            },
+            "time": "2020-04-14T19:31:53+00:00"
+        },
         {
             "name": "doctrine/inflector",
             "version": "2.0.6",
@@ -1072,6 +1107,125 @@
             "time": "2018-02-13T20:26:39+00:00"
         },
         {
+            "name": "pear/console_commandline",
+            "version": "v1.2.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pear/Console_CommandLine.git",
+                "reference": "611c5bff2e47ec5a184748cb5fedc2869098ff28"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pear/Console_CommandLine/zipball/611c5bff2e47ec5a184748cb5fedc2869098ff28",
+                "reference": "611c5bff2e47ec5a184748cb5fedc2869098ff28",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "*",
+                "ext-xml": "*",
+                "pear/pear_exception": "^1.0.0",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Console": "./"
+                },
+                "exclude-from-classmap": [
+                    "tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "include-path": [
+                ""
+            ],
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Richard Quadling",
+                    "email": "rquadling@gmail.com"
+                },
+                {
+                    "name": "David Jean Louis",
+                    "email": "izimobil@gmail.com"
+                }
+            ],
+            "description": "A full featured command line options and arguments parser.",
+            "homepage": "https://github.com/pear/Console_CommandLine",
+            "keywords": [
+                "console"
+            ],
+            "support": {
+                "issues": "http://pear.php.net/bugs/search.php?cmd=display&package_name[]=Console_CommandLine",
+                "source": "https://github.com/pear/Console_CommandLine"
+            },
+            "time": "2023-04-02T18:49:53+00:00"
+        },
+        {
+            "name": "pear/pear_exception",
+            "version": "v1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pear/PEAR_Exception.git",
+                "reference": "b14fbe2ddb0b9f94f5b24cf08783d599f776fff0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pear/PEAR_Exception/zipball/b14fbe2ddb0b9f94f5b24cf08783d599f776fff0",
+                "reference": "b14fbe2ddb0b9f94f5b24cf08783d599f776fff0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "<9"
+            },
+            "type": "class",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "classmap": [
+                    "PEAR/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "include-path": [
+                "."
+            ],
+            "license": [
+                "BSD-2-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Helgi Thormar",
+                    "email": "dufuz@php.net"
+                },
+                {
+                    "name": "Greg Beaver",
+                    "email": "cellog@php.net"
+                }
+            ],
+            "description": "The PEAR Exception base class.",
+            "homepage": "https://github.com/pear/PEAR_Exception",
+            "keywords": [
+                "exception"
+            ],
+            "support": {
+                "issues": "http://pear.php.net/bugs/search.php?cmd=display&package_name[]=PEAR_Exception",
+                "source": "https://github.com/pear/PEAR_Exception"
+            },
+            "time": "2021-03-21T15:43:46+00:00"
+        },
+        {
             "name": "php-di/invoker",
             "version": "2.3.3",
             "source": {
@@ -1198,6 +1352,71 @@
                 }
             ],
             "time": "2023-02-07T17:34:03+00:00"
+        },
+        {
+            "name": "phpmyadmin/sql-parser",
+            "version": "4.7.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpmyadmin/sql-parser.git",
+                "reference": "550ce6968794e890cfd5b4cbf202e716d78b6a92"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpmyadmin/sql-parser/zipball/550ce6968794e890cfd5b4cbf202e716d78b6a92",
+                "reference": "550ce6968794e890cfd5b4cbf202e716d78b6a92",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0",
+                "symfony/polyfill-mbstring": "^1.3"
+            },
+            "conflict": {
+                "phpmyadmin/motranslator": "<3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.8 || ~5.7 || ~6.5 || ^7.0",
+                "squizlabs/php_codesniffer": "~2.9 || ~3.4"
+            },
+            "suggest": {
+                "ext-mbstring": "For best performance",
+                "phpmyadmin/motranslator": "Translate messages to your favorite locale"
+            },
+            "bin": [
+                "bin/highlight-query",
+                "bin/lint-query",
+                "bin/tokenize-query"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PhpMyAdmin\\SqlParser\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "The phpMyAdmin Team",
+                    "email": "developers@phpmyadmin.net",
+                    "homepage": "https://www.phpmyadmin.net/team/"
+                }
+            ],
+            "description": "A validating SQL lexer and parser with a focus on MySQL dialect.",
+            "homepage": "https://github.com/phpmyadmin/sql-parser",
+            "keywords": [
+                "analysis",
+                "lexer",
+                "parser",
+                "sql"
+            ],
+            "support": {
+                "issues": "https://github.com/phpmyadmin/sql-parser/issues",
+                "source": "https://github.com/phpmyadmin/sql-parser"
+            },
+            "time": "2020-10-15T15:17:59+00:00"
         },
         {
             "name": "psr/container",

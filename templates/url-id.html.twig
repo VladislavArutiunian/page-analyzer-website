@@ -51,9 +51,9 @@
             <tr>
                 <td>{{ item.id }}</td>
                 <td>{{ item.status_code }}</td>
-                <td class="text-break"></td>
-                <td class="text-break"></td>
-                <td class="text-break"></td>
+                <td class="text-break">{{ item.h1 }}</td>
+                <td class="text-break">{{ item.title }}</td>
+                <td class="text-break">{{ item.description }}</td>
                 <td>{{ item.created_at }}</td>
             </tr>
             {% endfor %}
