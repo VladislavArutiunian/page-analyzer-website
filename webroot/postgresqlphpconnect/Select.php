@@ -12,7 +12,7 @@ class Select
         $stmt = $connection->prepare($sql);
 
         $stmt->execute();
-
+//var_dump($stmt->fetchAll(PDO::FETCH_ASSOC));
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -55,31 +55,31 @@ class Select
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public static function selectLastCheck(PDO $connection, string $url_id)
+    public static function selectLastCheck(PDO $connection, ?int $urlId)
     {
         $sql = "SELECT id, url_id, status_code, created_at FROM url_checks 
                                            WHERE url_id = :url_id 
                                            ORDER BY id DESC LIMIT 1";
         $stmt = $connection->prepare($sql);
 
-        $stmt->bindValue(':url_id', $url_id);
+        $stmt->bindValue(':url_id', $urlId);
 
         $stmt->execute();
 
         return self::normalizeFetchAll($stmt->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    public static function prepareAllUrls(PDO $connection)
+    public static function getAllUrls(PDO $connection)
     {
         $urls = Select::selectAllUrls($connection);
-        $prepared = [];
+        $withLastCheck = [];
         foreach ($urls as $url) {
             $lastCheck = self::selectLastCheck($connection, self::getId($url));
-            $url['last_check_created_at'] = empty($lastCheck) ? '' : $lastCheck['created_at'];
-            $url['last_check_response_code'] = empty($lastCheck) ? '' : $lastCheck['status_code'];
-            $prepared[] = $url;
+            $url['last_check_created_at'] = $lastCheck['created_at'] ?? '';
+            $url['last_check_response_code'] = $lastCheck['status_code'] ?? '';
+            $withLastCheck[] = $url;
         }
-        return $prepared;
+        return $withLastCheck;
     }
 
     public static function normalizeFetchAll($fetchAll): array
@@ -89,11 +89,15 @@ class Select
         }
         [$row] = $fetchAll;
         return $row;
-        //add checking indexes (only string type ones allowed)
     }
 
-    public static function getId(array $result): string
+    public static function getId(array $result): int
     {
         return $result['id'];
+    }
+
+    public static function getName(array $result): string
+    {
+        return $result['name'];
     }
 }

@@ -1,14 +1,13 @@
 <html>
 
-{% include ('parts/__head.html.twig') %}
+{% include ('includes/__head.html.twig') %}
 
 {% block body %}
 <body class="min-vh-100 d-flex flex-column">
 
-{% include ('parts/body/__header.html.twig') %}
+{% include ('includes/body/__header.html.twig') %}
 
-{% include ('parts/body/__flash.html.twig') %}
-
+{% include ('includes/body/__flash.html.twig') %}
 
 <main class="flex-grow-1">
     <div class="container-lg mt-3">
@@ -45,7 +44,7 @@
                 <th>description</th>
                 <th>Дата создания</th>
             </tr>
-            
+
             {% if checks is not empty %}
             {% for key, item in checks %}
             <tr>
@@ -63,7 +62,7 @@
     </div>
 </main>
 
-{% include ('parts/body/__footer.html.twig') %}
+{% include ('includes/body/__footer.html.twig') %}
 
 </body>
 {% endblock %}

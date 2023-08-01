@@ -5,8 +5,7 @@ namespace Hexlet\Code;
 use DI\ContainerBuilder;
 use Dotenv\Dotenv;
 use Exception;
-use Hexlet\Helpers\Checker;
-use Hexlet\Helpers\Normalize;
+use Hexlet\Helpers\SEOChecker;
 use Postgre\Connection;
 use Postgre\CreateTable;
 use Postgre\InsertValue;
@@ -54,9 +53,8 @@ $containerBuilder->addDefinitions([
                 die();
             }
         },
-        'log' => fn () => $logger,
+        'logger' => fn () => $logger,
 ]);
-
 
 AppFactory::setContainer($containerBuilder->build());
 
@@ -77,10 +75,8 @@ $app->add(
 
 $app->addErrorMiddleware(true, true, true);
 
-
 $twig = Twig::create(__DIR__ . '/../templates', ['cache' => false]);
 $app->add(TwigMiddleware::create($app, $twig));
-
 
 $app->get('/', function (Request $request, Response $response) {
     $view = Twig::fromRequest($request);
@@ -88,17 +84,15 @@ $app->get('/', function (Request $request, Response $response) {
     return $view->render($response, 'index.html.twig', ['headerMainActive' => 'active']);
 })->setName('main');
 
-
 $app->get('/urls', function (Request $request, Response $response) {
     $view = Twig::fromRequest($request);
-    $this->get('log')->error('Something happens11');
 
-    $urlList = Select::prepareAllUrls($this->get('connection'));
+    $urlList = Select::getAllUrls($this->get('connection'));
     $params = [
         'urlList' => $urlList,
         'headerSitesActive' => 'active'
     ];
-    return $view->render($response, 'urls.html.twig', $params);
+    return $view->render($response, 'url/index.html.twig', $params);
 })->setName('urls');
 
 $app->get('/urls/{id}', function (Request $request, Response $response, $args) {
@@ -121,14 +115,10 @@ $app->get('/urls/{id}', function (Request $request, Response $response, $args) {
         'flash' => $flash,
         'flashClass' => $flashClass ?? ''
     ];
-    return $view->render($response, 'url-id.html.twig', $params);
+    return $view->render($response, 'url/show.html.twig', $params);
 })->setName('url');
 
-
-
-
 $router = $app->getRouteCollector()->getRouteParser();
-
 
 $app->post('/urls', function (Request $request, Response $response) use ($router) {
     $view = Twig::fromRequest($request);
@@ -141,7 +131,6 @@ $app->post('/urls', function (Request $request, Response $response) use ($router
     $validation->rule('lengthMax', 'url', 255);
     $validation->rule('url', 'url');
 
-
     if (!$validation->validate()) {
         $params = [
             'inputClass' => 'is-invalid',
@@ -150,9 +139,12 @@ $app->post('/urls', function (Request $request, Response $response) use ($router
         $response->withStatus(422);
         return $view->render($response, 'index.html.twig', $params);
     }
-    $normalizedUrl = Normalize::normalizeUrl($url);
+
+    ['scheme' => $scheme, 'host' => $host] = parse_url($url);
+    $normalizedUrl = "$scheme://$host";
 
     $connection = $this->get('connection');
+
     $existingUrls = Select::selectUrlByName($connection, $normalizedUrl);
     $this->get('flash')->addMessage('success', 'Страница уже существует');
 
@@ -167,22 +159,19 @@ $app->post('/urls', function (Request $request, Response $response) use ($router
     return $response->withRedirect($router->urlFor('url', ['id' => $urlId]));
 });
 
-
-
 $app->post('/urls/{url_id}/checks', function (Request $request, Response $response, $args) use ($router) {
-    $url_id = $args['url_id'];
+    $url = Select::selectUrlById($this->get('connection'), $args['url_id']);
 
-    $check = new Checker();
-    $check->makeCheck($url_id);
-
-    if ($check->getErrors()) {
-        $this->get('flash')->addMessage('error', 'Произошла ошибка при проверке, не удалось подключиться');
-    } else {
+    try {
+        $checkParams = (new SEOChecker())->makeCheck($url['name']);
+        $insert = new InsertValue($this->get('connection'));
+        $insert->insertCheck($args['url_id'], $checkParams);
         $this->get('flash')->addMessage('success', 'Страница успешно проверена');
+    } catch (Exception $e) {
+        $this->get('flash')->addMessage('error', 'Check is failed');
     }
 
-    return $response->withRedirect($router->urlFor('url', ['id' => $url_id]));
+    return $response->withRedirect($router->urlFor('url', ['id' => $args['url_id']]));
 })->setName('check');
-
 
 $app->run();
