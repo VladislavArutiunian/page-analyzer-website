@@ -49,7 +49,10 @@ $containerBuilder->addDefinitions([
                 $tableCreator->createTables();
                 return $pdo;
             } catch (Exception $e) {
-                $logger->error('Error on bootstrap database', [$e->getCode(), $e->getMessage(), $e->getTraceAsString()]);
+                $logger->error(
+                    'Error on bootstrap database',
+                    [$e->getCode(), $e->getMessage(), $e->getTraceAsString()]
+                );
                 die();
             }
         },

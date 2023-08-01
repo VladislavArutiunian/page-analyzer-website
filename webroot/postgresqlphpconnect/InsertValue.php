@@ -32,7 +32,8 @@ class InsertValue
         return $this->pdo->lastInsertId();
     }
 
-    public function insertCheck(string $urlId, array $checkParams) {
+    public function insertCheck(string $urlId, array $checkParams)
+    {
         $sql = "INSERT INTO url_checks (url_id, status_code, h1, title, description, created_at)
                 VALUES (:url_id, :status_code, :h1, :title, :description, :created_at)";
         $stmt = $this->pdo->prepare($sql);
