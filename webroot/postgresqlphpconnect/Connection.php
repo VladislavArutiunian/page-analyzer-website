@@ -4,6 +4,7 @@ namespace Postgre;
 
 use Exception;
 use PDO;
+use Dotenv\Dotenv;
 
 final class Connection
 {
@@ -15,17 +16,16 @@ final class Connection
      */
     public static function connect(): PDO
     {
-        $params = parse_ini_file('database.ini');
-        if (!$params) {
-            throw new Exception('Cannot read configuration file');
+        if (!$_ENV) {
+            throw new Exception('Environment variables don\'t isset');
         }
         $conUrl = sprintf(
             "pgsql:host=%s;port=%d;dbname=%s;user=%s;password=%s",
-            $params['host'],
-            $params['port'],
-            $params['database'],
-            $params['user'],
-            $params['password']
+            $_ENV['HOST'],
+            $_ENV['PORT'],
+            $_ENV['DATABASE'],
+            $_ENV['USER'],
+            $_ENV['PASSWORD']
         );
         $pdo = new PDO($conUrl);
         $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);

@@ -3,10 +3,12 @@
 namespace Hexlet\Code;
 
 use DI\ContainerBuilder;
+use Dotenv\Dotenv;
+use Exception;
 use Hexlet\Helpers\Checker;
 use Hexlet\Helpers\Normalize;
-use Postgre;
 use Postgre\Connection;
+use Postgre\CreateTable;
 use Postgre\InsertValue;
 use Postgre\Select;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -16,6 +18,9 @@ use Slim\Flash\Messages;
 use Slim\Views\Twig;
 use Slim\Views\TwigMiddleware;
 use Valitron\Validator as V;
+use Monolog\Level;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
 
 $autoloadPath1 = __DIR__ . '/../../../autoload.php';
 $autoloadPath2 = __DIR__ . '/../vendor/autoload.php';
@@ -25,15 +30,32 @@ if (file_exists($autoloadPath1)) {
     require_once $autoloadPath2;
 }
 
+$root = dirname($_SERVER['DOCUMENT_ROOT']) . '/' ;
+
+Dotenv::createImmutable($root)->safeLoad();
+
+$logger = new Logger($_ENV['APP_NAME']);
+$logger->pushHandler(new StreamHandler($root . $_ENV['LOGS_DIR'], Level::Warning));
+
 $containerBuilder = new ContainerBuilder();
-$containerBuilder->addDefinitions(
-    [
+$containerBuilder->addDefinitions([
         'flash' => function () {
             $storage = [];
             return new Messages($storage);
-        }
-    ]
-);
+        },
+        'connection' => function () use ($logger) {
+            try {
+                $pdo = Connection::get()->connect();
+                $tableCreator = new CreateTable($pdo);
+                $tableCreator->createTables();
+                return $pdo;
+            } catch (Exception $e) {
+                $logger->error('Error on bootstrap database', [$e->getCode(), $e->getMessage(), $e->getTraceAsString()]);
+                die();
+            }
+        },
+        'log' => fn () => $logger,
+]);
 
 
 AppFactory::setContainer($containerBuilder->build());
@@ -69,10 +91,9 @@ $app->get('/', function (Request $request, Response $response) {
 
 $app->get('/urls', function (Request $request, Response $response) {
     $view = Twig::fromRequest($request);
+    $this->get('log')->error('Something happens11');
 
-    $connection = Connection::get()->connect();
-
-    $urlList = Select::prepareAllUrls($connection);
+    $urlList = Select::prepareAllUrls($this->get('connection'));
     $params = [
         'urlList' => $urlList,
         'headerSitesActive' => 'active'
@@ -90,7 +111,7 @@ $app->get('/urls/{id}', function (Request $request, Response $response, $args) {
 
     $id = $args['id'];
 
-    $connection = Connection::get()->connect();
+    $connection = $this->get('connection');
 
     $checks = Select::selectAllChecks($connection, $id);
     $siteParamsList = Select::selectUrlById($connection, $id);
@@ -131,7 +152,7 @@ $app->post('/urls', function (Request $request, Response $response) use ($router
     }
     $normalizedUrl = Normalize::normalizeUrl($url);
 
-    $connection = Connection::get()->connect();
+    $connection = $this->get('connection');
     $existingUrls = Select::selectUrlByName($connection, $normalizedUrl);
     $this->get('flash')->addMessage('success', 'Страница уже существует');
 

@@ -44,7 +44,7 @@ class InsertValue
                 VALUES (:url_id, :status_code, :h1, :title, :description, :created_at)";
         $stmt = $this->pdo->prepare($sql);
 
-        $tz = new CarbonTimeZone('Europe/Moscow'); // instance way
+        $tz = new CarbonTimeZone(); // instance way
         $carbon = Carbon::now($tz);
 
         $stmt->bindValue(':url_id', $url_id);

@@ -13,10 +13,27 @@ class CreateTable
         return $this;
     }
 
-    public function createTable()
+    public function createTables()
     {
-        $sql = "CREATE TABLE IF NOT EXISTS test2 (name varchar(255), id bigint)";
-        $this->pdo->exec($sql);
+        $sqls = [
+            'urls' => "CREATE TABLE IF NOT EXISTS urls (
+                        id  INT GENERATED ALWAYS AS IDENTITY,
+                        name    varchar(255),
+                        created_at  timestamp
+            );",
+            'url_checks' => "CREATE TABLE IF NOT EXISTS url_checks (
+                        id  INT GENERATED ALWAYS AS IDENTITY,
+                        url_id  INT,
+                        status_code varchar(255),
+                        h1  varchar(255),
+                        title   varchar(255),
+                        description TEXT,
+                        created_at  timestamp
+            );",
+        ];
+        foreach ($sqls as $sql) {
+            $this->pdo->exec($sql);
+        }
         return $this;
     }
 }

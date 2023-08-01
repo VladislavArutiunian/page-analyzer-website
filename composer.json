@@ -30,7 +30,9 @@
         "slim/flash": "^0.4.0",
         "guzzlehttp/guzzle": "^7.5",
         "imangazaliev/didom": "^2.0",
-        "cweiske/php-sqllint": "^0.2.3"
+        "cweiske/php-sqllint": "^0.2.3",
+        "vlucas/phpdotenv": "^5.5",
+        "monolog/monolog": "^3.4"
     },
     "require-dev": {
         "phpunit/phpunit": "*",
