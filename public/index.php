@@ -139,6 +139,7 @@ $app->post('/urls', function (Request $request, Response $response) use ($router
             'inputClass' => 'is-invalid',
             'inputValue' => htmlspecialchars($url)
         ];
+        http_response_code(response_code: 422);
         $response->withStatus(422);
         return $view->render($response, 'index.html.twig', $params);
     }
