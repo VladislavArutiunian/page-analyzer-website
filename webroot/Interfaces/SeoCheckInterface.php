@@ -4,5 +4,4 @@ namespace Database\Interfaces;
 
 interface SeoCheckInterface
 {
-
 }
