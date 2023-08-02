@@ -4,10 +4,7 @@ namespace Hexlet\Code;
 
 use Database\Connection;
 use Database\DbServiceFactory;
-use Database\PostgreSQL\CreateTable as PostgreSQLCreateTable;
-use Database\SQLite\SEOCheck;
-use Database\SQLite\SiteUrl;
-use Database\SQLite\CreateTable as SQLiteCreateTable;
+use Database\Helpers;
 use DI\ContainerBuilder;
 use Dotenv\Dotenv;
 use Exception;
@@ -15,7 +12,6 @@ use Hexlet\Helpers\SEOChecker;
 use Monolog\Handler\StreamHandler;
 use Monolog\Level;
 use Monolog\Logger;
-use PDO;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
@@ -65,10 +61,12 @@ AppFactory::setContainer($containerBuilder->build());
 $app = AppFactory::create();
 $app->add(
     function ($request, $next) {
-        if (session_status() !== PHP_SESSION_ACTIVE) {
-            session_start();
-        }
-        $this->get('flash')->__construct($_SESSION);
+//        if (session_status() !== PHP_SESSION_ACTIVE) {
+//            session_start();
+//        }
+
+//        $_SESSION = $_SESSION ?? [];
+//        $this->get('flash')->__construct($_SESSION);
 
         $dbServiceFactory = new DbServiceFactory($this->get('connection'));
 
@@ -158,7 +156,7 @@ $app->post('/urls', function (Request $request, Response $response) use ($router
         $this->get('flash')->clearMessage('success');
         $this->get('flash')->addMessage('success', 'Страница успешно добавлена');
     }
-    $urlId = $lastInsertId ?? Helper::getId($existingUrls);
+    $urlId = $lastInsertId ?? Helpers::getId($existingUrls);
 
     return $response->withRedirect($router->urlFor('url', ['id' => $urlId]));
 });
