@@ -6,10 +6,12 @@ use DI\ContainerBuilder;
 use Dotenv\Dotenv;
 use Exception;
 use Hexlet\Helpers\SEOChecker;
+use PDO;
 use Postgre\Connection;
 use Postgre\CreateTable;
-use Postgre\InsertValue;
-use Postgre\Select;
+use Postgre\Helper;
+use Postgre\SEOCheck;
+use Postgre\SiteUrl;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
@@ -56,7 +58,9 @@ $containerBuilder->addDefinitions([
                 die();
             }
         },
-        'logger' => fn () => $logger,
+        'logger' => $logger,
+        'siteUrl' => new SiteUrl(null),
+        'seoCheck' => new SEOCheck(null),
 ]);
 
 AppFactory::setContainer($containerBuilder->build());
@@ -64,14 +68,22 @@ AppFactory::setContainer($containerBuilder->build());
 $app = AppFactory::create();
 $app->add(
     function ($request, $next) {
-        // Start PHP session
         if (session_status() !== PHP_SESSION_ACTIVE) {
             session_start();
         }
-
-        // Change flash message storage
         $this->get('flash')->__construct($_SESSION);
-
+        return $next->handle($request);
+    }
+);
+$app->add(
+    function ($request, $next) {
+        $this->get('siteUrl')->__construct($this->get('connection'));
+        return $next->handle($request);
+    }
+);
+$app->add(
+    function ($request, $next) {
+        $this->get('seoCheck')->__construct($this->get('connection'));
         return $next->handle($request);
     }
 );
@@ -90,35 +102,33 @@ $app->get('/', function (Request $request, Response $response) {
 $app->get('/urls', function (Request $request, Response $response) {
     $view = Twig::fromRequest($request);
 
-    $urlList = Select::getAllUrls($this->get('connection'));
-    $params = [
-        'urlList' => $urlList,
-        'headerSitesActive' => 'active'
-    ];
-    return $view->render($response, 'url/index.html.twig', $params);
+    $urlList = $this->get('siteUrl')->getAll();
+    $headerSitesActive = 'active';
+
+    return $view->render(
+        $response,
+        'url/index.html.twig',
+        compact('urlList', 'headerSitesActive')
+    );
 })->setName('urls');
 
 $app->get('/urls/{id}', function (Request $request, Response $response, $args) {
     $view = Twig::fromRequest($request);
 
     $flash = $this->get('flash')->getMessages();
+    $flashClass = '';
     if (isset($flash)) {
         $flashClass = isset($flash['error']) ? 'danger' : 'success';
     }
 
-    $id = $args['id'];
+    $checks = $this->get('seoCheck')->selectAll($args['id']);
+    $siteParamsList = $this->get('siteUrl')->selectById($args['id']);
 
-    $connection = $this->get('connection');
-
-    $checks = Select::selectAllChecks($connection, $id);
-    $siteParamsList = Select::selectUrlById($connection, $id);
-    $params = [
-        'checks' => $checks,
-        'siteParamsList' => $siteParamsList,
-        'flash' => $flash,
-        'flashClass' => $flashClass ?? ''
-    ];
-    return $view->render($response, 'url/show.html.twig', $params);
+    return $view->render(
+        $response,
+        'url/show.html.twig',
+        compact('checks', 'siteParamsList', 'flash', 'flashClass')
+    );
 })->setName('url');
 
 $router = $app->getRouteCollector()->getRouteParser();
@@ -146,29 +156,25 @@ $app->post('/urls', function (Request $request, Response $response) use ($router
     ['scheme' => $scheme, 'host' => $host] = parse_url($url);
     $normalizedUrl = "$scheme://$host";
 
-    $connection = $this->get('connection');
-
-    $existingUrls = Select::selectUrlByName($connection, $normalizedUrl);
+    $existingUrls = $this->get('siteUrl')->selectByName($normalizedUrl);
     $this->get('flash')->addMessage('success', 'Страница уже существует');
 
     if (count($existingUrls) === 0) {
-        $insert = new InsertValue($connection);
-        $lastInsertId = $insert->insertValue('urls', $normalizedUrl);
+        $lastInsertId = $this->get('siteUrl')->insertValue($normalizedUrl);
         $this->get('flash')->clearMessage('success');
         $this->get('flash')->addMessage('success', 'Страница успешно добавлена');
     }
-    $urlId = $lastInsertId ?? Select::getId($existingUrls);
+    $urlId = $lastInsertId ?? Helper::getId($existingUrls);
 
     return $response->withRedirect($router->urlFor('url', ['id' => $urlId]));
 });
 
 $app->post('/urls/{url_id}/checks', function (Request $request, Response $response, $args) use ($router) {
-    $url = Select::selectUrlById($this->get('connection'), $args['url_id']);
+    $url = $this->get('siteUrl')->selectById($args['url_id']);
 
     try {
         $checkParams = (new SEOChecker())->makeCheck($url['name']);
-        $insert = new InsertValue($this->get('connection'));
-        $insert->insertCheck($args['url_id'], $checkParams);
+        $this->get('seoCheck')->insertCheck($args['url_id'], $checkParams);
         $this->get('flash')->addMessage('success', 'Страница успешно проверена');
     } catch (Exception $e) {
         $this->get('flash')->addMessage('error', 'Check is failed');
