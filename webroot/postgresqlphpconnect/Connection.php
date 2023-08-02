@@ -15,6 +15,7 @@ final class Connection
      */
     public static function connect(): PDO
     {
+        var_dump($_ENV);
         if (!$_ENV) {
             throw new Exception('Environment variables don\'t isset');
         }
