@@ -27,15 +27,14 @@ if (file_exists($autoloadPath1)) {
 } else {
     require_once $autoloadPath2;
 }
-session_start();
 
 $root = dirname($_SERVER['DOCUMENT_ROOT']) . '/' ;
 
 Dotenv::createImmutable($root)->safeLoad();
 
 $logger = new Logger($_ENV['APP_NAME'] ?? '');
-$logger->pushHandler(new StreamHandler($root . $_ENV['LOGS_DIR'] ?? 'tmp/main.log', Level::Warning));
-
+$logsDir = $_ENV['LOGS_DIR'] ?? 'tmp/main.log';
+$logger->pushHandler(new StreamHandler($root . $logsDir, Level::Warning));
 
 $containerBuilder = new ContainerBuilder();
 $containerBuilder->addDefinitions([
@@ -63,6 +62,9 @@ AppFactory::setContainer($containerBuilder->build());
 $app = AppFactory::create();
 $app->add(
     function ($request, $next) {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
         $this->get('flash')->__construct($_SESSION);
         $dbServiceFactory = new DbServiceFactory($this->get('connection'));
 
