@@ -1,13 +1,11 @@
 <?php
 
-namespace Database\SQLite;
+namespace Database\Services;
 
 use Carbon\Carbon;
-use Database\Helpers;
-use Database\Interfaces\SeoCheckInterface;
 use PDO;
 
-class SEOCheck implements SeoCheckInterface
+class SEOCheck
 {
     public function __construct(private PDO $connection)
     {

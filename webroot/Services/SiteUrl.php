@@ -1,13 +1,11 @@
 <?php
 
-namespace Database\SQLite;
+namespace Database\Services;
 
 use Carbon\Carbon;
-use Database\Helpers;
-use Database\Interfaces\SiteUrlInterface;
 use PDO;
 
-class SiteUrl implements SiteUrlInterface
+class SiteUrl
 {
     public function __construct(private PDO $connection)
     {

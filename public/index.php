@@ -4,7 +4,9 @@ namespace Hexlet\Code;
 
 use Database\Connection;
 use Database\DbServiceFactory;
-use Database\Helpers;
+use Database\Services\Helpers;
+use Database\Services\SEOCheck;
+use Database\Services\SiteUrl;
 use DI\ContainerBuilder;
 use Dotenv\Dotenv;
 use Exception;
@@ -12,10 +14,10 @@ use Hexlet\Helpers\SEOChecker;
 use Monolog\Handler\StreamHandler;
 use Monolog\Level;
 use Monolog\Logger;
-use Slim\Http\Response;
-use Slim\Http\ServerRequest as Request;
 use Slim\Factory\AppFactory;
 use Slim\Flash\Messages;
+use Slim\Http\Response;
+use Slim\Http\ServerRequest as Request;
 use Slim\Views\Twig;
 use Slim\Views\TwigMiddleware;
 use Valitron\Validator as V;
@@ -66,10 +68,11 @@ $app->add(
             session_start();
         }
         $this->get('flash')->__construct($_SESSION);
-        $dbServiceFactory = new DbServiceFactory($this->get('connection'));
+        $connection = $this->get('connection');
+        $dbServiceFactory = new DbServiceFactory($connection);
 
-        $this->set('siteUrl', $dbServiceFactory->buildSiteUrl());
-        $this->set('seoCheck', $dbServiceFactory->buildSeoCheck());
+        $this->set('siteUrl', new SiteUrl($connection));
+        $this->set('seoCheck', new SEOCheck($connection));
 
         $tableCreator = $dbServiceFactory->buildTableCreator();
         $tableCreator->createTables();
