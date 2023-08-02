@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\PostgreSQL;
+namespace Database\SQLite;
 
 use Carbon\Carbon;
 use Database\Helpers;

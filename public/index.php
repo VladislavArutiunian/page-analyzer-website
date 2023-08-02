@@ -2,6 +2,12 @@
 
 namespace Hexlet\Code;
 
+use Database\Connection;
+use Database\DbServiceFactory;
+use Database\PostgreSQL\CreateTable as PostgreSQLCreateTable;
+use Database\SQLite\SEOCheck;
+use Database\SQLite\SiteUrl;
+use Database\SQLite\CreateTable as SQLiteCreateTable;
 use DI\ContainerBuilder;
 use Dotenv\Dotenv;
 use Exception;
@@ -9,11 +15,7 @@ use Hexlet\Helpers\SEOChecker;
 use Monolog\Handler\StreamHandler;
 use Monolog\Level;
 use Monolog\Logger;
-use Postgre\Connection;
-use Postgre\CreateTable;
-use Postgre\Helper;
-use Postgre\SEOCheck;
-use Postgre\SiteUrl;
+use PDO;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
@@ -45,10 +47,7 @@ $containerBuilder->addDefinitions([
         },
         'connection' => function () use ($logger) {
             try {
-                $pdo = Connection::get()->connect();
-                $tableCreator = new CreateTable($pdo);
-                $tableCreator->createTables();
-                return $pdo;
+                return Connection::get()->connect();
             } catch (Exception $e) {
                 $logger->error(
                     'Error on bootstrap database',
@@ -59,8 +58,6 @@ $containerBuilder->addDefinitions([
             }
         },
         'logger' => $logger,
-        'siteUrl' => new SiteUrl(null),
-        'seoCheck' => new SEOCheck(null),
 ]);
 
 AppFactory::setContainer($containerBuilder->build());
@@ -72,18 +69,15 @@ $app->add(
             session_start();
         }
         $this->get('flash')->__construct($_SESSION);
-        return $next->handle($request);
-    }
-);
-$app->add(
-    function ($request, $next) {
-        $this->get('siteUrl')->__construct($this->get('connection'));
-        return $next->handle($request);
-    }
-);
-$app->add(
-    function ($request, $next) {
-        $this->get('seoCheck')->__construct($this->get('connection'));
+
+        $dbServiceFactory = new DbServiceFactory($this->get('connection'));
+
+        $this->set('siteUrl', $dbServiceFactory->buildSiteUrl());
+        $this->set('seoCheck', $dbServiceFactory->buildSeoCheck());
+
+        $tableCreator = $dbServiceFactory->buildTableCreator();
+        $tableCreator->createTables();
+
         return $next->handle($request);
     }
 );

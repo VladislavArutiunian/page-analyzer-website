@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\PostgreSQL;
+namespace Database\SQLite;
 
 use PDO;
 
@@ -17,12 +17,12 @@ class CreateTable
     {
         $sqls = [
             'urls' => "CREATE TABLE IF NOT EXISTS urls (
-                        id  INT GENERATED ALWAYS AS IDENTITY,
+                        id  INTEGER PRIMARY KEY,
                         name    varchar(255),
                         created_at  timestamp
             );",
             'url_checks' => "CREATE TABLE IF NOT EXISTS url_checks (
-                        id  INT GENERATED ALWAYS AS IDENTITY,
+                        id  INTEGER PRIMARY KEY,
                         url_id  INT,
                         status_code varchar(255),
                         h1  varchar(255),

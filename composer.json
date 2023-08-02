@@ -6,7 +6,9 @@
         "psr-4": {
             "Hexlet\\Code\\": "public/",
             "Hexlet\\Helpers\\": "src/",
-            "Postgre\\": "webroot/postgresqlphpconnect/"
+            "Database\\": "webroot/",
+            "Database\\PostgreSQL\\": "webroot/postgresqlphpconnect/",
+            "Database\\SQLite\\": "webroot/sqlitephpconnect/"
         }
     },
     "authors": [

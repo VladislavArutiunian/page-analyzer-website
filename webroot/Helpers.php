@@ -1,8 +1,8 @@
 <?php
 
-namespace Postgre;
+namespace Database;
 
-class Helper
+class Helpers
 {
     public static function normalizeFetchAll($fetchAll): array
     {

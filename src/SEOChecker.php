@@ -6,8 +6,8 @@ use DiDom\Document;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
-use Postgre\InsertValue;
-use Postgre\Select;
+use Database\PostgreSQL\postgresqlphpconnect\InsertValue;
+use Database\PostgreSQL\postgresqlphpconnect\Select;
 
 class SEOChecker
 {
