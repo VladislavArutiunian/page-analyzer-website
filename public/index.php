@@ -112,7 +112,7 @@ $app->get('/urls', function (Request $request, Response $response) {
     );
 })->setName('urls');
 
-$app->get('/urls/{id}', function (Request $request, Response $response, $args) {
+$app->get('/urls/{id:[0-9]+}', function (Request $request, Response $response, $args) {
     $view = Twig::fromRequest($request);
 
     $flash = $this->get('flash')->getMessages();
@@ -169,18 +169,18 @@ $app->post('/urls', function (Request $request, Response $response) use ($router
     return $response->withRedirect($router->urlFor('url', ['id' => $urlId]));
 });
 
-$app->post('/urls/{url_id}/checks', function (Request $request, Response $response, $args) use ($router) {
-    $url = $this->get('siteUrl')->selectById($args['url_id']);
+$app->post('/urls/{id:[0-9]+}/checks', function (Request $request, Response $response, $args) use ($router) {
+    $url = $this->get('siteUrl')->selectById($args['id']);
 
     try {
         $checkParams = (new SEOChecker())->makeCheck($url['name']);
-        $this->get('seoCheck')->insertCheck($args['url_id'], $checkParams);
+        $this->get('seoCheck')->insertCheck($args['id'], $checkParams);
         $this->get('flash')->addMessage('success', 'Страница успешно проверена');
     } catch (Exception $e) {
         $this->get('flash')->addMessage('error', 'Check is failed');
     }
 
-    return $response->withRedirect($router->urlFor('url', ['id' => $args['url_id']]));
+    return $response->withRedirect($router->urlFor('url', ['id' => $args['id']]));
 })->setName('check');
 
 $app->run();
