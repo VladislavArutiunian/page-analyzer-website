@@ -32,7 +32,7 @@ if (file_exists($autoloadPath1)) {
 
 $root = dirname($_SERVER['DOCUMENT_ROOT']) . '/' ;
 
-Dotenv::createImmutable($root)->safeLoad();
+Dotenv::createImmutable($root)->load();
 
 $logger = new Logger($_ENV['APP_NAME']);
 $logger->pushHandler(new StreamHandler($root . $_ENV['LOGS_DIR'], Level::Warning));

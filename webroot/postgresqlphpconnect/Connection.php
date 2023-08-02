@@ -18,8 +18,9 @@ final class Connection
         if (!$_ENV) {
             throw new Exception('Environment variables don\'t isset');
         }
-        $host = !$_ENV['HOST'] ? '127.0.0.1' : $_ENV['HOST'];
+        $host = !$_ENV['HOST'] ? '0.0.0.0' : $_ENV['HOST'];
         $port = !$_ENV['PORT'] ? '5432' : $_ENV['PORT'];
+
         $conUrl = sprintf(
             "pgsql:host=$host;port=$port;dbname=%s;user=%s;password=%s",
             $_ENV['DATABASE'],

@@ -1,4 +1,4 @@
-PORT ?= 8000
+PORT ?= 80
 start:
 	php -S 0.0.0.0:$(PORT) -t public
 
