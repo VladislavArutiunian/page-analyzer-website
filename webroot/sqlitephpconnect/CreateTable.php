@@ -10,7 +10,6 @@ class CreateTable
     public function __construct(PDO $pdo)
     {
         $this->pdo = $pdo;
-        return $this;
     }
 
     public function createTables()
