@@ -27,7 +27,7 @@ if (file_exists($autoloadPath1)) {
 } else {
     require_once $autoloadPath2;
 }
-
+session_start();
 $root = dirname($_SERVER['DOCUMENT_ROOT']) . '/' ;
 
 Dotenv::createImmutable($root)->safeLoad();
@@ -39,7 +39,7 @@ $containerBuilder = new ContainerBuilder();
 $containerBuilder->addDefinitions([
         'flash' => function () {
             $storage = [];
-            return new Messages($storage);
+            return new Messages($_SESSION);
         },
         'connection' => function () use ($logger) {
             try {
@@ -61,13 +61,6 @@ AppFactory::setContainer($containerBuilder->build());
 $app = AppFactory::create();
 $app->add(
     function ($request, $next) {
-//        if (session_status() !== PHP_SESSION_ACTIVE) {
-//            session_start();
-//        }
-
-//        $_SESSION = $_SESSION ?? [];
-//        $this->get('flash')->__construct($_SESSION);
-
         $dbServiceFactory = new DbServiceFactory($this->get('connection'));
 
         $this->set('siteUrl', $dbServiceFactory->buildSiteUrl());
