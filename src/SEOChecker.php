@@ -2,17 +2,12 @@
 
 namespace Hexlet\Helpers;
 
-use DiDom\Exceptions\InvalidSelectorException;
+use DiDom\Document;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
-use PDO;
-use Postgre\Connection;
 use Postgre\InsertValue;
 use Postgre\Select;
-use GuzzleHttp\Exception\ConnectException;
-use GuzzleHttp\Exception\ServerException;
-use DiDom\Document;
 
 class SEOChecker
 {

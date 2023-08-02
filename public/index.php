@@ -6,7 +6,9 @@ use DI\ContainerBuilder;
 use Dotenv\Dotenv;
 use Exception;
 use Hexlet\Helpers\SEOChecker;
-use PDO;
+use Monolog\Handler\StreamHandler;
+use Monolog\Level;
+use Monolog\Logger;
 use Postgre\Connection;
 use Postgre\CreateTable;
 use Postgre\Helper;
@@ -19,9 +21,6 @@ use Slim\Flash\Messages;
 use Slim\Views\Twig;
 use Slim\Views\TwigMiddleware;
 use Valitron\Validator as V;
-use Monolog\Level;
-use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
 
 $autoloadPath1 = __DIR__ . '/../../../autoload.php';
 $autoloadPath2 = __DIR__ . '/../vendor/autoload.php';
@@ -55,6 +54,7 @@ $containerBuilder->addDefinitions([
                     'Error on bootstrap database',
                     [$e->getCode(), $e->getMessage(), $e->getTraceAsString()]
                 );
+                http_response_code(response_code: 422);
                 die();
             }
         },

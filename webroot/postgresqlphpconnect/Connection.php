@@ -4,7 +4,6 @@ namespace Postgre;
 
 use Exception;
 use PDO;
-use Dotenv\Dotenv;
 
 final class Connection
 {
@@ -19,16 +18,16 @@ final class Connection
         if (!$_ENV) {
             throw new Exception('Environment variables don\'t isset');
         }
+        $host = !$_ENV['HOST'] ? '127.0.0.1' : $_ENV['HOST'];
+        $port = !$_ENV['PORT'] ? '5432' : $_ENV['PORT'];
         $conUrl = sprintf(
-            "pgsql:host=%s;port=%d;dbname=%s;user=%s;password=%s",
-            $_ENV['HOST'],
-            $_ENV['PORT'],
+            "pgsql:host=$host;port=$port;dbname=%s;user=%s;password=%s",
             $_ENV['DATABASE'],
             $_ENV['USER'],
             $_ENV['PASSWORD']
         );
         $pdo = new PDO($conUrl);
-        $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         return $pdo;
     }
 
@@ -40,7 +39,6 @@ final class Connection
 
         return Connection::$connect;
     }
-
 
     protected function __construct()
     {
