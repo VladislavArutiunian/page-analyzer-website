@@ -12,8 +12,8 @@ use Hexlet\Helpers\SEOChecker;
 use Monolog\Handler\StreamHandler;
 use Monolog\Level;
 use Monolog\Logger;
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
+use Slim\Http\Response;
+use Slim\Http\ServerRequest as Request;
 use Slim\Factory\AppFactory;
 use Slim\Flash\Messages;
 use Slim\Views\Twig;
@@ -142,8 +142,8 @@ $app->post('/urls', function (Request $request, Response $response) use ($router
         return $view->render($response, 'index.html.twig', $params)->withStatus(422);
     }
 
-    ['scheme' => $scheme, 'host' => $host] = parse_url($url);
-    $normalizedUrl = "$scheme://$host";
+    $parsedUrl = parse_url($url);
+    $normalizedUrl = "{$parsedUrl['scheme']}://{$parsedUrl['host']}";
 
     $existingUrls = $this->get('siteUrl')->selectByName($normalizedUrl);
     $this->get('flash')->addMessage('success', 'Страница уже существует');

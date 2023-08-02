@@ -9,7 +9,7 @@ use PDO;
 
 class SEOCheck implements SeoCheckInterface
 {
-    public function __construct(private ?PDO $connection)
+    public function __construct(private PDO $connection)
     {
     }
 

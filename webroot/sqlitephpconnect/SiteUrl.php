@@ -9,7 +9,7 @@ use PDO;
 
 class SiteUrl implements SiteUrlInterface
 {
-    public function __construct(private ?PDO $connection)
+    public function __construct(private PDO $connection)
     {
     }
 

@@ -4,7 +4,7 @@ namespace Database;
 
 class Helpers
 {
-    public static function normalizeFetchAll($fetchAll): array
+    public static function normalizeFetchAll(array $fetchAll): array
     {
         if ($fetchAll === []) {
             return [];
